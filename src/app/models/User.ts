@@ -1,5 +1,6 @@
 import * as mongoose from "mongoose";
 import { UserInterface } from "./interfaces/User";
+import { encriptPassword } from "../controllers/validations/encrypt";
 
 
 const UserSchema = new mongoose.Schema(
@@ -15,6 +16,7 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      set: encriptPassword
     },
     document:{
       type: String,

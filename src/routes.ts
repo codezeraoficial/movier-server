@@ -14,7 +14,11 @@ export class Routes {
       .route("/users")
       .get(this.UsersController.index)
       .post(this.UsersController.store);
-
+      
+    app
+    .route("/session")
+    .post(this.SessionController.store)
+    
     app.use(authMiddleware);
     
     app
@@ -35,8 +39,5 @@ export class Routes {
       .put(this.MovieController.update)
       .delete(this.MovieController.destroy);
 
-      app
-      .route("/session")
-      .post(this.SessionController.store)
   }
 }

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import { UserModel } from "../models/interfaces/User";
-import { encriptPassword } from "./validations/encrypt";
+import { encriptPassword, checkPassword } from "./validations/encrypt";
 
 export class UsersController {
   public async index(req: Request, res: Response) {
@@ -22,7 +22,11 @@ export class UsersController {
   public async store(req: Request, res: Response) {
     try {
       const params: UserModel = req.body;
-      params.password = encriptPassword(params.password);
+      
+      const userExists = await User.findOne({ email: params.email });
+
+      if (userExists)
+        return res.status(400).json({ error: "User already exists." });
 
       User.create(params)
         .then((user) => res.status(201).json(user))
@@ -33,6 +37,7 @@ export class UsersController {
   }
   public async update(req: Request, res: Response) {
     const userId = req.params._id;
+
     const params: UserModel = req.body;
 
     if (!userId) return res.status(400).json({ error: "Id must be provided." });
@@ -40,6 +45,16 @@ export class UsersController {
     const user = await User.findById({ _id: userId });
 
     if (!user) return res.status(400).json({ error: "User was not found." });
+
+    if(params.email !== user.email){
+      const userExists = await User.findOne({ email: params.email });
+
+      if (userExists)  return res.status(400).json({ error: "User already exists." });
+    }
+    
+    if(params.oldPassword && (!checkPassword(params.oldPassword, user.password))){
+      return res.status(401).json({ error: "Password does not match" });
+    }
 
     try {
       const user = await User.findByIdAndUpdate(userId, params, {

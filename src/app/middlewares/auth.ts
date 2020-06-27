@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
-import {promisify} from "util";
 
 import auth from '../../config/auth';
+import { Auth } from "./interfaces/Auth";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -15,8 +15,8 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 
   try {
 
-    const decoded = jwt.verify(token, auth.secret, (err, decoded) =>{
-      return decoded;   
+    jwt.verify(token, auth.secret, (err, decoded: Auth) =>{
+      req.params._id = decoded._id;        
     });    
     
     return next();

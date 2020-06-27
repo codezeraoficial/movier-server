@@ -1,7 +1,7 @@
 import * as bcrypt from "bcryptjs";
 
 
-export function encriptPassword(password: string){
+export function encriptPassword(password: string): string{
   return bcrypt.hashSync(password, 8);
 }
 
