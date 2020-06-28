@@ -119,4 +119,46 @@ export class UsersController {
       return res.status(500).json(error);
     }
   }
+
+  public async updatePassword(req: Request, res: Response) {
+    const params: UserModel = req.body;
+
+    const schema = Yup.object().shape({
+      email: Yup.string().email().required(),
+      document: Yup.string().required(),
+      phone: Yup.string().required(),
+      password: Yup.string().min(6),
+      confirmPassword: Yup.string()
+        .min(6)
+        .when("password", (password, field) =>
+          password ? field.required() : field
+        ),
+    });
+
+    if (!(await schema.isValid(params))) {
+      return res
+        .status(400)
+        .json({ error: "Error saving, check the fields and try again " });
+    }
+
+    const user = await User.findOne({
+      email: params.email,
+      document: params.document,
+      phone: params.phone,
+    });
+
+    const userId = user._id;
+
+    if (!user) return res.status(400).json({ error: "User was not found." });
+
+    try {
+      const user = await User.findByIdAndUpdate(userId, params, {
+        new: true,
+      });
+
+      return res.status(201).json(user);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
 }

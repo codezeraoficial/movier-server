@@ -6,7 +6,11 @@ const MovieSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    url: {
+    image_url: {
+      type: String,
+      required: true,
+    },
+    movie_url: {
       type: String,
       required: true,
     },
