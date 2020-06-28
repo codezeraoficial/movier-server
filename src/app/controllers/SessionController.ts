@@ -1,5 +1,6 @@
 import * as jwt from "jsonwebtoken";
 import { Request, Response } from "express";
+import * as Yup from "yup";
 
 import User from "../models/User";
 import { checkPassword } from "./validations/encrypt";
@@ -9,6 +10,16 @@ export class SessionController {
   public async store(req: Request, res: Response) {
     const { email, password } = req.body;
 
+    const schema = Yup.object().shape({
+      email: Yup.string().email().required(),
+      password: Yup.string().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res
+        .status(401)
+        .json({ error: "Error on login, check the fields and try again " });
+    }
     const user = await User.findOne({ email: email });
 
     if (!user) {
@@ -19,17 +30,17 @@ export class SessionController {
       return res.status(401).json({ error: "Password does not match" });
     }
 
-    const {_id, name} = user;
+    const { _id, name } = user;
 
     return res.json({
-      user:{
+      user: {
         id: _id,
         name,
-        email
+        email,
       },
-      token: jwt.sign({_id}, auth.secret, {
-        expiresIn: auth.expiresIn
-      })
-    })
+      token: jwt.sign({ _id }, auth.secret, {
+        expiresIn: auth.expiresIn,
+      }),
+    });
   }
 }

@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
+import * as Yup from "yup";
+
 import User from "../models/User";
 import { UserModel } from "../models/interfaces/User";
-import { encriptPassword, checkPassword } from "./validations/encrypt";
+import { checkPassword } from "./validations/encrypt";
 
 export class UsersController {
   public async index(req: Request, res: Response) {
@@ -20,9 +22,21 @@ export class UsersController {
     return res.status(200).json(user);
   }
   public async store(req: Request, res: Response) {
+    const params: UserModel = req.body;
+
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      email: Yup.string().email().required(),
+      password: Yup.string().required().min(6),
+    });
+
+    if (!(await schema.isValid(params))) {
+      return res
+        .status(400)
+        .json({ error: "Error saving, check the fields and try again " });
+    }
+
     try {
-      const params: UserModel = req.body;
-      
       const userExists = await User.findOne({ email: params.email });
 
       if (userExists)
@@ -40,19 +54,43 @@ export class UsersController {
 
     const params: UserModel = req.body;
 
+    const schema = Yup.object().shape({
+      name: Yup.string(),
+      email: Yup.string().email(),
+      oldPassword: Yup.string().min(6),
+      password: Yup.string()
+        .min(6)
+        .when("oldPassword", (oldPassword, field) =>
+          oldPassword ? field.required() : field
+        ),
+      confirmPassword: Yup.string().when("password", (password, field) =>
+        password ? field.required().oneOf([Yup.ref("password")]) : field
+      ),
+    });
+
+    if (!(await schema.isValid(params))) {
+      return res
+        .status(400)
+        .json({ error: "Error saving, check the fields and try again " });
+    }
+
     if (!userId) return res.status(400).json({ error: "Id must be provided." });
 
     const user = await User.findById({ _id: userId });
 
     if (!user) return res.status(400).json({ error: "User was not found." });
 
-    if(params.email !== user.email){
+    if (params.email !== user.email) {
       const userExists = await User.findOne({ email: params.email });
 
-      if (userExists)  return res.status(400).json({ error: "User already exists." });
+      if (userExists)
+        return res.status(400).json({ error: "User already exists." });
     }
-    
-    if(params.oldPassword && (!checkPassword(params.oldPassword, user.password))){
+
+    if (
+      params.oldPassword &&
+      !checkPassword(params.oldPassword, user.password)
+    ) {
       return res.status(401).json({ error: "Password does not match" });
     }
 
