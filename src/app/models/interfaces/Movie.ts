@@ -4,7 +4,7 @@ export interface MovieModel{
   image_url: string,
   name: string,
   release_date:string,
-  duration: string,
+  classification: string,
   gender: string,
   author: string,
 }

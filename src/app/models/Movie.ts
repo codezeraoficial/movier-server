@@ -18,7 +18,7 @@ const MovieSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    duration: {
+    classification: {
       type: String,
       required: true,
     },
