@@ -4,6 +4,8 @@
   "description": "A service that will privide entertainment for global people",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/config/server.js",
     "dev": "nodemon src/config/server.ts",
     "dev:debug": "node --inspect -r ts-node/register src/config/server.ts"
   },
