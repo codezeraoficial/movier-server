@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+import { MovieInterface } from "./interfaces/Movie";
 
 const MovieSchema = new mongoose.Schema(
   {
@@ -48,4 +49,4 @@ const MovieSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Movie", MovieSchema);
+export default mongoose.model<MovieInterface>("Movie", MovieSchema);

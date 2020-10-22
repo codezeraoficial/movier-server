@@ -13,6 +13,10 @@ export interface UserModel{
   credits: number,
   movies_id: string[]
 }
+export interface BuyMovie{
+  _id: string, 
+  movie_id: string
+}
 
 export interface UserInterface extends Document{
   _id: string,

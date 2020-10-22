@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import * as Yup from "yup";
 
 import User from "../models/User";
-import { UserModel } from "../models/interfaces/User";
+import { BuyMovie, UserModel } from "../models/interfaces/User";
 import { checkPassword } from "./validations/encrypt";
+import Movie from "../models/Movie";
 
 export class UsersController {
   public async index(req: Request, res: Response) {
@@ -104,6 +105,49 @@ export class UsersController {
       return res.status(500).json(error);
     }
   }
+
+  public async buyMovie(req: Request, res: Response) {
+    const params: BuyMovie = req.body;
+
+    const schema = Yup.object().shape({
+      _id: Yup.string().required(),
+      movie_id: Yup.string().required()
+    });
+
+    if (!(await schema.isValid(params))) {
+      return res
+        .status(400)
+        .json({ error: "Error on buying, check the fields and try again " });
+    }
+
+    const { movie_id, _id } = params;
+
+    const user = await User.findById({ _id: _id });
+    const movie = await Movie.findById({ _id: movie_id });
+
+    if (!user) return res.status(400).json({ error: "User was not found." });
+    if (!movie) return res.status(400).json({ error: "User was not found." });
+
+    if (user.movies_id.find(m => m === movie._id)) return res.status(400).json({ error: "User already owns the movie." });
+
+    if (user.credits < movie.price) return res.status(400).json({ error: "User does not have enough credits." });
+
+    user.credits = user.credits - movie.price;
+    user.movies_id.push(movie_id)
+
+
+    try {
+      const userBuy = await User.findByIdAndUpdate(_id, user, {
+        new: true,
+      });
+
+      return res.status(201).json(userBuy);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+
+  }
+
   public async destroy(req: Request, res: Response) {
     const userId = req.params._id;
     if (!userId) return res.status(400).json({ error: "Id must be provided." });

@@ -16,6 +16,7 @@ export class Routes {
       .post(this.UsersController.store);
 
     app.route("/users").put(this.UsersController.updatePassword);
+    app.route("/userbuy").put(this.UsersController.buyMovie);
 
     app.route("/session").post(this.SessionController.store);
 
