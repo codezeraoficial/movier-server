@@ -27,6 +27,7 @@ export class MovieController{
       .then((Movie) => res.status(201).json(Movie))
       .catch((err: Error) => res.status(500).json(err));
   }
+  
   public async update(req: Request, res: Response) {
     const movieId = req.params._id;
     const params: MovieModel = req.body;

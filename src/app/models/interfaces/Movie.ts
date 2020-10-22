@@ -1,3 +1,5 @@
+import { Category } from "../../enums";
+
 export interface MovieModel{
   _id: string,
   movie_url: string,
@@ -7,5 +9,8 @@ export interface MovieModel{
   classification: string,
   gender: string,
   author: string,
+  category: Category,
+  price: number,
+  due: Date
 }
 

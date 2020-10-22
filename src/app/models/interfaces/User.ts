@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { MovieModel } from './Movie';
 
 export interface UserModel{
   _id: string,
@@ -9,6 +10,8 @@ export interface UserModel{
   oldPassword: string,
   document: string,
   phone: string,
+  credits: number,
+  movies_id: string[]
 }
 
 export interface UserInterface extends Document{
@@ -18,4 +21,6 @@ export interface UserInterface extends Document{
   password: string,
   document: string,
   phone: string,
+  credits: number,
+  movies_id: string[]
 }

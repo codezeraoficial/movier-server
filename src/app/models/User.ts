@@ -18,18 +18,27 @@ const UserSchema = new mongoose.Schema(
       required: true,
       set: encriptPassword
     },
-    document:{
+    document: {
       type: String,
       required: true
     },
-    phone:{
+    phone: {
       type: String,
       required: true
-    },   
+    },
+    credits: {
+      type: Number,
+      default: 0,
+      required: true
+    },
+    movies_id: [{
+      type: String,
+      required: false
+    }]
   },
   {
-    timestamps: true,    
-  }, 
+    timestamps: true,
+  },
 );
 
 export default mongoose.model<UserInterface>("User", UserSchema);
