@@ -106,6 +106,37 @@ export class UsersController {
     }
   }
 
+  public async buying(req: Request, res: Response) {
+    const params: BuyMovie = req.body;
+
+    const schema = Yup.object().shape({
+      _id: Yup.string().required(),
+      movie_id: Yup.string().required()
+    });
+
+    if (!(await schema.isValid(params))) {
+      return res
+        .status(400)
+        .json({ error: "Error on buying, check the fields and try again " });
+    }
+
+    const { movie_id, _id } = params;
+
+    const user = await User.findById({ _id: _id });
+    const movie = await Movie.findById({ _id: movie_id });
+
+    const  hasMovie = user.movies_id.includes(movie_id);
+    const  hasCredits = user.credits > movie.price;
+
+    return res.json({
+      buyInfo: {        
+        hasMovie,
+        hasCredits,
+        credits: user.credits
+      }
+    });
+  }
+
   public async buyMovie(req: Request, res: Response) {
     const params: BuyMovie = req.body;
 
