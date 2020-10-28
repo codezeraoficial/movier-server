@@ -120,12 +120,12 @@ export class UsersController {
         .json({ error: "Error on buying, check the fields and try again " });
     }
 
-    const { movie_id, _id } = params;
+    const { movieId, userId } = params;
 
-    const user = await User.findById({ _id: _id });
-    const movie = await Movie.findById({ _id: movie_id });
+    const user = await User.findById({ _id: userId });
+    const movie = await Movie.findById({ _id: movieId });
 
-    const  hasMovie = user.movies_id.includes(movie_id);
+    const  hasMovie = user.movies_id.includes(movieId);
     const  hasCredits = user.credits > movie.price;
 
     return res.json({
@@ -151,10 +151,10 @@ export class UsersController {
         .json({ error: "Error on buying, check the fields and try again " });
     }
 
-    const { movie_id, _id } = params;
+    const { movieId, userId } = params;
 
-    const user = await User.findById({ _id: _id });
-    const movie = await Movie.findById({ _id: movie_id });
+    const user = await User.findById({ _id: userId });
+    const movie = await Movie.findById({ _id: movieId });
 
     if (!user) return res.status(400).json({ error: "User was not found." });
     if (!movie) return res.status(400).json({ error: "User was not found." });
@@ -164,11 +164,11 @@ export class UsersController {
     if (user.credits < movie.price) return res.status(400).json({ error: "User does not have enough credits." });
 
     user.credits = user.credits - movie.price;
-    user.movies_id.push(movie_id)
+    user.movies_id.push(movieId)
 
 
     try {
-      const userBuy = await User.findByIdAndUpdate(_id, user, {
+      const userBuy = await User.findByIdAndUpdate(userId, user, {
         new: true,
       });
 

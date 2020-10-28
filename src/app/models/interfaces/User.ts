@@ -14,8 +14,8 @@ export interface UserModel{
   movies_id: string[]
 }
 export interface BuyMovie{
-  _id: string, 
-  movie_id: string
+  userId: string, 
+  movieId: string
 }
 
 export interface UserInterface extends Document{
