@@ -128,7 +128,9 @@ export class UsersController {
     const  hasMovie = user.movies_id.includes(movieId);
     const  hasCredits = user.credits > movie.price;
 
-    return res.json({
+    return res
+    .status(200)
+    .json({
       buyInfo: {        
         hasMovie,
         hasCredits,
