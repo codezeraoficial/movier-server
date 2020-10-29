@@ -108,9 +108,13 @@ export class UsersController {
 
   public async buying(req: Request, res: Response) {
     const params: BuyMovie = req.body;
-    const { movieId, userId } = params;
 
-    if (!movieId && !userId) {
+    const schema = Yup.object().shape({
+      userId: Yup.string().required(),
+      movieId: Yup.string().required()
+    });
+
+    if (!(await schema.isValid(params))) {
       return res
         .status(400)
         .json({ error: "Error on buying, check the fields and try again " });
