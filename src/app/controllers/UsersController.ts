@@ -110,8 +110,8 @@ export class UsersController {
     const params: BuyMovie = req.body;
 
     const schema = Yup.object().shape({
-      _id: Yup.string().required(),
-      movie_id: Yup.string().required()
+      userId: Yup.string().required(),
+      movieId: Yup.string().required()
     });
 
     if (!(await schema.isValid(params))) {
@@ -124,6 +124,7 @@ export class UsersController {
 
     const user = await User.findById({ _id: userId });
     const movie = await Movie.findById({ _id: movieId });
+
 
     if (!user) return res.status(400).json({ error: "User was not found." });
     if (!movie) return res.status(400).json({ error: "User was not found." });
@@ -140,8 +141,12 @@ export class UsersController {
       const userBuy = await User.findByIdAndUpdate(userId, user, {
         new: true,
       });
+      const {  credits, movies_id } = userBuy;
 
-      return res.status(201).json(userBuy);
+      return res.status(201).json({user:{
+        credits,
+        movies_id
+      }});
     } catch (error) {
       return res.status(500).json(error);
     }
